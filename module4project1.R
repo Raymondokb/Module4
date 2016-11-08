@@ -7,6 +7,6 @@ rr <- read.csv("D:\\Users\\msboon\\Desktop\\For Data science coursera\\Plots\\mo
 barplot(table(rr$Global_active_power), col="red")
 library(ggplot2)
 
-ggplot(rr) + geom_histogram(aes(Global_active_power), bins=12)
+ggplot(rr) +labs(title="Global Active Power",xlab="Global Active Power (kilowatts", ylab="Frequency")+ geom_histogram(aes(Global_active_power), bins=15, col="red", fill="red")+theme(panel.grid.major = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 
 
