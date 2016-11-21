@@ -337,7 +337,7 @@ barplot(mstore3[,2], main = "Total PM2.5 emissions for four years (coal-related)
 rrM <- rr[which(rr$fips=="24510"),]
 vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$EI.Sector),1], as.character), stringsAsFactors = FALSE))
 
-store4 <- rr[which(rrM$SCC==as.numeric(vehicle[1,1])),]
+store4 <- rrM[which(rrM$SCC==as.numeric(vehicle[1,1])),]
 for(i in 2:length(vehicle)){
   store4 <- rbind(store4, rrM[which(rrM$SCC==as.numeric(vehicle[i,1])),])
 }
@@ -348,5 +348,25 @@ for(i in 1:length(years4)){
   mstore4[i,2] <- sum(store4[which(store4$year==years4[i]),4])
 }
 rownames(mstore4) <- mstore4[,1]
-barplot(mstore4[,2], main = "Total PM2.5 emissions for four years (vehicle-related)", col = mstore4[,2], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+barplot(mstore4[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Baltimore", col = mstore4[,2], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+#?????????
 
+
+#6
+rrL <- rr[which(rr$fips=="06037"),]
+vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$EI.Sector),1], as.character), stringsAsFactors = FALSE))
+store4L <- rrL[which(rrL$SCC==as.numeric(vehicle[1,1])),]
+for(i in 2:length(vehicle)){
+  store4L <- rbind(store4L, rrL[which(rrL$SCC==as.numeric(vehicle[i,1])),])
+}
+mstore4L <- matrix(data=0, nrow = 4, ncol = 2)
+years4L <- unique(store4L$year)
+for(i in 1:length(years4L)){
+  mstore4L[i,1] <- years4L[i]
+  mstore4L[i,2] <- sum(store4L[which(store4L$year==years4L[i]),4])
+}
+rownames(mstore4L) <- mstore4L[,1]
+barplot(mstore4L[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Los Angeles", col = mstore4L[,2], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+
+
+#To have the years graph side by side
