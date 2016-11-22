@@ -244,6 +244,7 @@ image(1:7,1,as.matrix(1:7),col=mypalette,xlab="Greens (sequential)",
 #https://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
 #Module4Week4
+setwd("D:\\Users\\msboon\\Desktop\\For Data science coursera\\Plots")
 rr <- readRDS("D:\\Users\\msboon\\Desktop\\For Data science coursera\\Plots\\exdata%2Fdata%2FNEI_data (1)\\summarySCC_PM25.rds")
 ee <- readRDS("D:\\Users\\msboon\\Desktop\\For Data science coursera\\Plots\\exdata%2Fdata%2FNEI_data (1)\\Source_Classification_Code.rds")
 ee <- data.frame(ee, stringsAsFactors = FALSE)
@@ -253,7 +254,7 @@ table(rr$year)
 table(rr$Pollutant)
 #want total emission for each of the four years
 #thiking: use a bar plot or histogram
-
+#1
 #barplot
 #manually create
 store1 <- matrix(data=0, nrow = 4, ncol = 2); colnames(store1) <- c("Year", "Total PM2.5  emission")
@@ -264,8 +265,9 @@ for(i in 1:length(years)){
   store1[i,2] <- sum(rr[which(rr$year==years[i]),4])
 }
 rownames(store1) <- store1[,1]
-barplot(store1[,2], main = "Total PM2.5 emissions for four years", col = store1[,2], xlab = "Years", ylab = "Total PM2.5 emission")
-
+png("plot1a.png", width = 500, height = 450)
+barplot(store1[,2], main = "Total PM2.5 emissions for four years", col = brewer.pal(4,"Blues"), xlab = "Years", ylab = "Total PM2.5 emission")
+dev.off()
 #2
 #fips=="24510"
 #use which() to single out just Maryland
@@ -278,8 +280,9 @@ for(i in 1:length(years)){
   store2[i,2] <- sum(rr[which(rrM$year==years[i]),4])
 }
 rownames(store2) <- store2[,1]
-barplot(store2[,2], main = "Total PM2.5 emissions for four years in Maryland", col = store2[,2], xlab = "Years", ylab = "Total PM2.5 emission")
-
+png("plot2a.png", width = 500, height = 450)
+barplot(store2[,2], main = "Total PM2.5 emissions for four years in Maryland", col =brewer.pal(4,"Blues") , xlab = "Years", ylab = "Total PM2.5 emission")
+dev.off()
 
 #3
 #for Baltimore
@@ -289,11 +292,17 @@ unique(rr$type)
 type1 <- unique(rr$type)
 #rrM
 #######Below one line is the answer
-ggplot(rrM, aes(factor(year), fill=type)) + geom_bar()+ggtitle("Sources of emission over 4 years")
-##
-ggplot(rrM, aes(factor(type), fill=factor(year))) + geom_bar()+ggtitle("Sources of emission over 4 years")
+library(plyr)
 
+#ppa3 <- ggplot(rrM, aes(x=factor(year), fill=type)) + geom_bar(position = "dodge"   )+ggtitle("Sources of emission over 4 years")
+#ppa3 + geom_text(aes(y =2, label = rrM$Emissions), position = position_dodge(0.9), vjust = 0)
+
+##
+png("plot3a.png", width = 500, height = 450)
+ggplot(rrM, aes(factor(type), fill=factor(year))) + geom_bar(position = "dodge")+ggtitle("Sources of emission over 4 years")
+dev.off()
 #ggplot(rrM, aes(x = factor(type))) + geom_bar(stat="count")  + ggtitle("hi")
+
 i=1
 rrM2 <- rrM[which(rrM$type==type1[i]),]
 ggplot(rrM2, aes(x = factor(year))) + geom_bar(stat = "count", fill =brewer.pal(5,"Blues")[2:5]) + ggtitle(type1[i] )
@@ -330,43 +339,56 @@ for(i in 1:length(years3)){
   mstore3[i,2] <- sum(store3[which(store3$year==years3[i]),4])
 }
 rownames(mstore3) <- mstore3[,1]
-barplot(mstore3[,2], main = "Total PM2.5 emissions for four years (coal-related)", col = mstore3[,2], xlab = "Years", ylab = "Total PM2.5 emission (coal-related)")
+png("plot4a.png", width = 500, height = 450)
+ppa4 <- barplot(mstore3[,2], main = "Total PM2.5 emissions for four years (coal-related)", col =brewer.pal(8,"Blues")[2:5], xlab = "Years", ylab = "Total PM2.5 emission (coal-related)")
+#text(ppa4, 10, round(mstore3[,2],3), cex = 1, pos = 3, col = "red")
+dev.off()
 
 #5
 ##get baltimore only
 rrM <- rr[which(rr$fips=="24510"),]
-vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$EI.Sector),1], as.character), stringsAsFactors = FALSE))
+vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$SCC.Level.Two),1], as.character), stringsAsFactors = FALSE))
 
 store4 <- rrM[which(rrM$SCC==as.numeric(vehicle[1,1])),]
 for(i in 2:length(vehicle)){
   store4 <- rbind(store4, rrM[which(rrM$SCC==as.numeric(vehicle[i,1])),])
 }
 mstore4 <- matrix(data=0, nrow = 4, ncol = 2)
-years4 <- unique(store4$year)
+years4 <- unique(rrM$year)
 for(i in 1:length(years4)){
   mstore4[i,1] <- years4[i]
   mstore4[i,2] <- sum(store4[which(store4$year==years4[i]),4])
 }
 rownames(mstore4) <- mstore4[,1]
-barplot(mstore4[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Baltimore", col = mstore4[,2], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+png("plot5a.png", width = 500, height = 450)
+ppa <-barplot(mstore4[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Baltimore", col =brewer.pal(8,"Blues")[2:5], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+#text(ppa, 10, round(mstore4[,2],3), cex = 1, pos = 3, col = "red")
+dev.off()
 #?????????
 
 
 #6
 rrL <- rr[which(rr$fips=="06037"),]
-vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$EI.Sector),1], as.character), stringsAsFactors = FALSE))
+vehicle <- t(data.frame(lapply(ee[grepl("Vehicle",ee$SCC.Level.Two),1], as.character), stringsAsFactors = FALSE))
 store4L <- rrL[which(rrL$SCC==as.numeric(vehicle[1,1])),]
 for(i in 2:length(vehicle)){
   store4L <- rbind(store4L, rrL[which(rrL$SCC==as.numeric(vehicle[i,1])),])
 }
 mstore4L <- matrix(data=0, nrow = 4, ncol = 2)
-years4L <- unique(store4L$year)
+years4L <- unique(rrM$year)
 for(i in 1:length(years4L)){
   mstore4L[i,1] <- years4L[i]
   mstore4L[i,2] <- sum(store4L[which(store4L$year==years4L[i]),4])
 }
 rownames(mstore4L) <- mstore4L[,1]
-barplot(mstore4L[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Los Angeles", col = mstore4L[,2], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
-
+ppa6 <- barplot(mstore4L[,2], main = "Total PM2.5 emissions for four years (vehicle-related) in Los Angeles", col =brewer.pal(8,"Blues")[2:5], xlab = "Years", ylab = "Total PM2.5 emission (vehicle-related)")
+text(ppa6, 20, round(mstore4L[,2],3), cex = 1, pos = 3, col= "red")
 
 #To have the years graph side by side
+mstore4a <- cbind(mstore4, mstore4L[,2])
+colnames(mstore4a) <- c("Year", "Baltimore", "Los Angeles")
+png("plot6a.png", width = 500, height = 450)
+pp <- barplot(mstore4a[,c(2,3)], beside=TRUE, names.arg = colnames(mstore4a)[2:3], main = "Total PM2.5 emissions for four years (vehicle-related ", col =brewer.pal(5,"Blues")[2:5] )
+text(pp, 30, years, cex = 1, pos = 3)
+dev.off()
+
